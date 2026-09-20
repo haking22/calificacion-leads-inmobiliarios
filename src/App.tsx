@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import './App.css'
 import LeadForm from './components/LeadForm'
 import LeadsList from './components/LeadsList'
 import MessageGenerator from './components/MessageGenerator'
@@ -44,24 +45,29 @@ export default function App() {
     setPlans(loadPlans())
   }
 
+  function openPlanFromCard(leadId: string) {
+    const lead = leads.find((l) => l.id === leadId)
+    if (!lead) return
+    setTab('leads')
+    setLeadsView({ mode: 'plan', lead })
+  }
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <header className="border-b border-neutral-200 bg-teal text-white">
-        <div className="mx-auto max-w-5xl px-4 py-5">
-          <h1 className="text-xl font-bold">Calificación de leads inmobiliarios</h1>
-          <p className="text-sm text-neutral-100/90">Plusval Inmobiliaria — scoring, mensajes y seguimiento</p>
+    <div className="app">
+      <header className="app-header">
+        <div className="app-header__inner">
+          <h1 className="app-header__title">Calificación de leads inmobiliarios</h1>
+          <p className="app-header__subtitle">Plusval Inmobiliaria — scoring, mensajes y seguimiento</p>
         </div>
       </header>
 
-      <nav className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-5xl gap-1 px-4">
+      <nav className="app-nav">
+        <div className="app-nav__inner">
           {TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`border-b-2 px-4 py-3 text-sm font-medium transition ${
-                tab === t.key ? 'border-teal text-teal' : 'border-transparent text-neutral-500 hover:text-neutral-800'
-              }`}
+              className={`app-nav__tab${tab === t.key ? ' app-nav__tab--active' : ''}`}
             >
               {t.label}
             </button>
@@ -69,16 +75,13 @@ export default function App() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-5xl px-4 py-8">
+      <main className="app-main">
         {tab === 'leads' && (
-          <section className="space-y-6">
+          <section>
             {leadsView.mode === 'list' && (
               <>
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => setLeadsView({ mode: 'form' })}
-                    className="rounded-md bg-teal px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-                  >
+                <div className="section-header section-header--end">
+                  <button onClick={() => setLeadsView({ mode: 'form' })} className="button button--primary">
                     + Calificar nuevo lead
                   </button>
                 </div>
@@ -111,32 +114,25 @@ export default function App() {
         {tab === 'mensajes' && <MessageGenerator />}
 
         {tab === 'seguimiento' && (
-          <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-neutral-800">Planes de seguimiento guardados</h2>
+          <section>
+            <div className="section-header">
+              <h2 className="section-title">Planes de seguimiento guardados</h2>
+            </div>
             {plans.length === 0 && (
-              <p className="rounded-lg border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500">
+              <p className="empty-state">
                 No hay planes guardados todavía. Ve a "Calificar leads" y usa el botón "Seguimiento" en un lead.
               </p>
             )}
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="plans-grid">
               {plans.map((plan) => {
                 const done = plan.touches.filter((t) => t.done).length
                 return (
-                  <div key={plan.id} className="rounded-lg border border-neutral-200 bg-white p-4">
-                    <p className="font-medium text-neutral-800">{plan.leadNombre}</p>
-                    <p className="text-sm text-neutral-500">
+                  <div key={plan.id} className="plan-card">
+                    <p className="plan-card__name">{plan.leadNombre}</p>
+                    <p className="plan-card__meta">
                       {plan.startDate} · {plan.hora} · {done}/{plan.touches.length} toques hechos
                     </p>
-                    <button
-                      onClick={() => {
-                        const lead = leads.find((l) => l.id === plan.leadId)
-                        if (lead) {
-                          setTab('leads')
-                          setLeadsView({ mode: 'plan', lead })
-                        }
-                      }}
-                      className="mt-2 text-sm font-medium text-teal hover:underline"
-                    >
+                    <button onClick={() => openPlanFromCard(plan.leadId)} className="plan-card__link">
                       Ver / editar
                     </button>
                   </div>

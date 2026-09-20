@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './LeadForm.css'
 import { PARAM_DEFS, type Lead } from '../lib/types'
 import { classify, computeAverage, newLead } from '../lib/scoring'
 
@@ -28,22 +29,22 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+    <form onSubmit={handleSubmit} className="lead-form">
+      <div className="lead-form__grid">
+        <label className="field">
           Nombre del lead
           <input
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+            className="field__input"
             value={lead.nombre}
             onChange={(e) => setLead((prev) => ({ ...prev, nombre: e.target.value }))}
             placeholder="Ej. José Quezada"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+        <label className="field">
           Fuente
           <select
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+            className="field__select"
             value={lead.fuente}
             onChange={(e) => setLead((prev) => ({ ...prev, fuente: e.target.value }))}
           >
@@ -55,17 +56,17 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
         </label>
       </div>
 
-      <div className="space-y-4">
+      <div className="param-list">
         {PARAM_DEFS.map((def) => {
           const paramScore = lead.scores[def.key]
           return (
-            <div key={def.key} className="rounded-lg border border-neutral-200 bg-white p-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
+            <div key={def.key} className="param-card">
+              <div className="param-card__head">
                 <div>
-                  <p className="font-medium text-neutral-800">{def.label}</p>
-                  <p className="text-sm text-neutral-500">{def.question}</p>
+                  <p className="param-card__label">{def.label}</p>
+                  <p className="param-card__question">{def.question}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="param-card__score">
                   <input
                     type="range"
                     min={0}
@@ -73,13 +74,13 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
                     value={paramScore.score}
                     disabled={paramScore.sinDatos}
                     onChange={(e) => updateParam(def.key, { score: Number(e.target.value) })}
-                    className="accent-teal"
+                    className="param-card__slider"
                   />
-                  <span className="w-6 text-center font-semibold text-teal">{paramScore.score}</span>
+                  <span className="param-card__score-value">{paramScore.score}</span>
                 </div>
               </div>
-              <div className="mt-2 flex flex-wrap items-center gap-3">
-                <label className="flex items-center gap-1 text-xs text-neutral-500">
+              <div className="param-card__options">
+                <label className="param-card__checkbox">
                   <input
                     type="checkbox"
                     checked={paramScore.sinDatos}
@@ -94,7 +95,7 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
                 </label>
               </div>
               <textarea
-                className="mt-2 w-full rounded-md border border-neutral-200 px-2 py-1 text-sm focus:border-teal focus:outline-none"
+                className="field__textarea param-card__note"
                 placeholder="Evidencia textual de la conversación que justifica el score..."
                 rows={2}
                 value={paramScore.nota}
@@ -105,11 +106,10 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
         })}
       </div>
 
-      <div className="rounded-lg border border-coral/40 bg-coral/5 p-4">
-        <label className="flex items-start gap-2 text-sm font-medium text-neutral-800">
+      <div className="withdrawal-panel">
+        <label className="withdrawal-panel__checkbox">
           <input
             type="checkbox"
-            className="mt-0.5"
             checked={lead.retiroExplicito}
             onChange={(e) => setLead((prev) => ({ ...prev, retiroExplicito: e.target.checked }))}
           />
@@ -117,7 +117,7 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
         </label>
         {lead.retiroExplicito && (
           <textarea
-            className="mt-2 w-full rounded-md border border-neutral-200 px-2 py-1 text-sm focus:border-teal focus:outline-none"
+            className="field__textarea withdrawal-panel__note"
             placeholder="¿Qué razón dio (o no dio) el lead? Útil para un posible seguimiento futuro."
             rows={2}
             value={lead.notasRetiro}
@@ -126,10 +126,10 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
         )}
       </div>
 
-      <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+      <label className="field">
         Notas generales / análisis psicológico
         <textarea
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+          className="field__textarea"
           rows={3}
           placeholder="Estilo de comunicación, patrón de negociación, tolerancia al riesgo, interpretación de silencios..."
           value={lead.notasGenerales}
@@ -137,20 +137,20 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
         />
       </label>
 
-      <div className="flex items-center justify-between rounded-lg bg-teal/10 p-4">
+      <div className="summary-bar">
         <div>
-          <p className="text-sm text-neutral-600">Score total (promedio de 9 parámetros)</p>
-          <p className="text-2xl font-bold text-teal">{average.toFixed(1)} / 10</p>
+          <p className="summary-bar__label">Score total (promedio de 9 parámetros)</p>
+          <p className="summary-bar__score">{average.toFixed(1)} / 10</p>
         </div>
-        <span className="rounded-full border px-4 py-1 text-sm font-semibold text-neutral-800">{classification}</span>
+        <span className="summary-bar__badge">{classification}</span>
       </div>
 
-      <div className="flex gap-3">
-        <button type="submit" className="rounded-md bg-teal px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
+      <div className="lead-form__actions">
+        <button type="submit" className="button button--primary">
           Guardar lead
         </button>
         {onCancel && (
-          <button type="button" onClick={onCancel} className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
+          <button type="button" onClick={onCancel} className="button button--ghost">
             Cancelar
           </button>
         )}

@@ -1,0 +1,132 @@
+.followup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.followup__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.followup__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.followup__subtitle {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.followup__back {
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.followup__back:hover {
+  text-decoration: underline;
+}
+
+.followup__notice {
+  border: 1px solid #e9cf9f;
+  background-color: var(--color-gold-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.followup__controls {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .followup__controls {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.followup__controls-action {
+  display: flex;
+  align-items: flex-end;
+}
+
+.followup__controls-action .button {
+  width: 100%;
+}
+
+.followup__summary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.touches-table-wrap {
+  max-height: 28rem;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.touches-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--font-size-sm);
+}
+
+.touches-table thead {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.touches-table th,
+.touches-table td {
+  padding: var(--space-1) var(--space-3);
+}
+
+.touches-table tbody tr {
+  border-top: 1px solid var(--color-border);
+}
+
+.touches-table__index {
+  color: var(--color-text-muted);
+}
+
+.touches-table__date {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.touches-table__done {
+  text-align: center;
+}
+
+.touches-table__input {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1);
+  font-size: var(--font-size-sm);
+  background: transparent;
+}
+
+.touches-table__input:hover {
+  border-color: var(--color-border);
+}
+
+.touches-table__input:focus {
+  outline: none;
+  border-color: var(--color-teal);
+}

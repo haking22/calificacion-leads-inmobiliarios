@@ -1,0 +1,72 @@
+.leads-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-3);
+}
+
+.leads-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.leads-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--font-size-sm);
+}
+
+.leads-table thead {
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.leads-table th,
+.leads-table td {
+  padding: var(--space-2) var(--space-4);
+}
+
+.leads-table tbody tr {
+  border-top: 1px solid var(--color-border);
+}
+
+.leads-table__name {
+  font-weight: 600;
+}
+
+.leads-table__score {
+  font-weight: 700;
+  color: var(--color-teal);
+}
+
+.leads-table__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.leads-table__action {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.leads-table__action--neutral {
+  color: var(--color-text-muted);
+}
+
+.leads-table__action--primary {
+  color: var(--color-teal);
+}
+
+.leads-table__action--danger {
+  color: var(--color-coral);
+}
+
+.leads-table__action:hover {
+  text-decoration: underline;
+}

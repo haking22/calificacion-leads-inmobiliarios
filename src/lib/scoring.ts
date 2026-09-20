@@ -34,11 +34,11 @@ export function classify(average: number, retiroExplicito: boolean): Classificat
   return 'Caliente'
 }
 
-export const CLASSIFICATION_COLORS: Record<Classification, string> = {
-  'Frío': 'bg-blue-100 text-blue-800 border-blue-300',
-  'Tibio': 'bg-gold/15 text-gold border-gold/40',
-  'Caliente': 'bg-coral/15 text-coral border-coral/40',
-  'Frío/Perdido': 'bg-neutral-200 text-neutral-600 border-neutral-300',
+export const CLASSIFICATION_BADGE_CLASS: Record<Classification, string> = {
+  'Frío': 'badge badge--frio',
+  'Tibio': 'badge badge--tibio',
+  'Caliente': 'badge badge--caliente',
+  'Frío/Perdido': 'badge badge--perdido',
 }
 
 export function leadSummary(lead: Lead) {

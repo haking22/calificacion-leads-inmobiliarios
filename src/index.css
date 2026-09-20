@@ -1,12 +1,68 @@
-@import "tailwindcss";
-
-@theme {
+:root {
   --color-teal: #1b4b43;
+  --color-teal-soft: #e4ece9;
   --color-coral: #b94a2c;
+  --color-coral-soft: #f5e4de;
   --color-gold: #b8781f;
+  --color-gold-soft: #f4e9d8;
+
+  --color-bg: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-text: #1f2a27;
+  --color-text-muted: #62716c;
+  --color-border: #e1ded6;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-full: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --font-size-sm: 0.85rem;
+  --font-size-base: 0.95rem;
+  --font-size-lg: 1.1rem;
+  --font-size-xl: 1.35rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
-  background-color: #f7f6f3;
-  color: #1f2a27;
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
 }
