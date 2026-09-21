@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod'
-import { LEAD_ANALYSIS_SYSTEM_PROMPT, leadAnalysisSchema } from '../src/lib/leadAnalysis.ts'
+import { LEAD_ANALYSIS_SYSTEM_PROMPT, leadAnalysisSchema } from '../src/lib/leadAnalysis.js'
 
 const MAX_CONVERSATION_CHARS = 20000
 
@@ -11,11 +11,7 @@ function jsonResponse(body: unknown, status: number): Response {
   })
 }
 
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Método no permitido' }, 405)
-  }
-
+export async function POST(request: Request): Promise<Response> {
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
     return jsonResponse({ error: 'ANTHROPIC_API_KEY no está configurada en el servidor' }, 500)
@@ -47,7 +43,7 @@ export default async function handler(request: Request): Promise<Response> {
         },
       ],
       output_config: {
-        format: zodOutputFormat(leadAnalysisSchema, 'lead_analysis'),
+        format: zodOutputFormat(leadAnalysisSchema),
       },
     })
 
