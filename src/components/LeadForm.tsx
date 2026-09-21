@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './LeadForm.css'
 import { PARAM_DEFS, type Lead } from '../lib/types'
 import { classify, computeAverage, newLead } from '../lib/scoring'
+import { analyzeLeadConversation } from '../lib/analyzeLead'
 
 interface Props {
   initialLead?: Lead
@@ -11,9 +12,33 @@ interface Props {
 
 export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
   const [lead, setLead] = useState<Lead>(initialLead ?? newLead('', 'WhatsApp'))
+  const [analyzing, setAnalyzing] = useState(false)
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
+  const [preguntasSugeridas, setPreguntasSugeridas] = useState<string[]>([])
 
   const average = computeAverage(lead.scores)
   const classification = classify(average, lead.retiroExplicito)
+
+  async function handleAnalyze() {
+    if (!lead.conversacion.trim() || analyzing) return
+    setAnalyzing(true)
+    setAnalyzeError(null)
+    try {
+      const analysis = await analyzeLeadConversation(lead.conversacion)
+      setLead((prev) => ({
+        ...prev,
+        scores: analysis.scores,
+        retiroExplicito: analysis.retiroExplicito,
+        notasRetiro: analysis.notasRetiro,
+        notasGenerales: analysis.notasGenerales,
+      }))
+      setPreguntasSugeridas(analysis.preguntasSugeridas)
+    } catch (err) {
+      setAnalyzeError(err instanceof Error ? err.message : 'Error al analizar la conversación')
+    } finally {
+      setAnalyzing(false)
+    }
+  }
 
   function updateParam(key: (typeof PARAM_DEFS)[number]['key'], patch: Partial<Lead['scores'][typeof key]>) {
     setLead((prev) => ({
@@ -54,6 +79,34 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
             <option value="Otro">Otro</option>
           </select>
         </label>
+      </div>
+
+      <div className="conversation-panel">
+        <label className="field">
+          Conversación con el lead (WhatsApp)
+          <textarea
+            className="field__textarea"
+            rows={6}
+            placeholder="Pega aquí la conversación completa de WhatsApp con el lead..."
+            value={lead.conversacion}
+            onChange={(e) => setLead((prev) => ({ ...prev, conversacion: e.target.value }))}
+          />
+        </label>
+        <div className="conversation-panel__actions">
+          <button
+            type="button"
+            onClick={handleAnalyze}
+            disabled={!lead.conversacion.trim() || analyzing}
+            className="button button--primary"
+          >
+            {analyzing ? 'Analizando…' : 'Analizar con IA'}
+          </button>
+          <span className="conversation-panel__hint">
+            Llena automáticamente los 9 parámetros, la clasificación y el análisis psicológico. Puedes ajustar
+            cualquier valor después.
+          </span>
+        </div>
+        {analyzeError && <p className="conversation-panel__error">{analyzeError}</p>}
       </div>
 
       <div className="param-list">
@@ -136,6 +189,17 @@ export default function LeadForm({ initialLead, onSave, onCancel }: Props) {
           onChange={(e) => setLead((prev) => ({ ...prev, notasGenerales: e.target.value }))}
         />
       </label>
+
+      {preguntasSugeridas.length > 0 && (
+        <div className="suggested-questions">
+          <p className="suggested-questions__title">Preguntas sugeridas para recalibrar el score</p>
+          <ul className="suggested-questions__list">
+            {preguntasSugeridas.map((pregunta, i) => (
+              <li key={i}>{pregunta}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="summary-bar">
         <div>

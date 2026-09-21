@@ -14,6 +14,7 @@ export function newLead(nombre: string, fuente: string): Lead {
     nombre,
     fuente,
     fechaCreacion: new Date().toISOString(),
+    conversacion: '',
     scores: emptyScores(),
     retiroExplicito: false,
     notasRetiro: '',

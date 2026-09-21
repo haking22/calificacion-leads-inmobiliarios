@@ -61,6 +61,7 @@ export interface Lead {
   nombre: string
   fuente: string
   fechaCreacion: string
+  conversacion: string
   scores: Record<ParamKey, ParamScore>
   retiroExplicito: boolean
   notasRetiro: string
