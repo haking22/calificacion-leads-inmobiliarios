@@ -4,7 +4,7 @@
 }
 
 .app-header {
-  background-color: var(--color-teal);
+  background-color: var(--color-green);
   color: white;
   border-bottom: 1px solid var(--color-border);
 }
@@ -16,6 +16,7 @@
 }
 
 .app-header__title {
+  font-family: var(--font-heading);
   font-size: var(--font-size-xl);
   font-weight: 700;
 }
@@ -44,6 +45,7 @@
   border: none;
   border-bottom: 2px solid transparent;
   padding: var(--space-3) var(--space-4);
+  font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-muted);
@@ -55,8 +57,8 @@
 }
 
 .app-nav__tab--active {
-  color: var(--color-teal);
-  border-bottom-color: var(--color-teal);
+  color: var(--color-green);
+  border-bottom-color: var(--color-green);
 }
 
 .app-main {
@@ -78,6 +80,7 @@
 }
 
 .section-title {
+  font-family: var(--font-heading);
   font-size: var(--font-size-lg);
   font-weight: 600;
 }
@@ -105,8 +108,8 @@
 .field__select:focus,
 .field__textarea:focus {
   outline: none;
-  border-color: var(--color-teal);
-  box-shadow: 0 0 0 2px var(--color-teal-soft);
+  border-color: var(--color-green);
+  box-shadow: 0 0 0 2px var(--color-green-soft);
 }
 
 .empty-state {
@@ -134,15 +137,15 @@
 }
 
 .badge--tibio {
-  background-color: var(--color-gold-soft);
-  color: var(--color-gold);
-  border-color: #e9cf9f;
+  background-color: var(--color-lime-soft);
+  color: var(--color-lime-text);
+  border-color: #e3ecab;
 }
 
 .badge--caliente {
-  background-color: var(--color-coral-soft);
-  color: var(--color-coral);
-  border-color: #e5bfae;
+  background-color: var(--color-orange-soft);
+  color: var(--color-orange);
+  border-color: #f0c6ac;
 }
 
 .badge--perdido {
@@ -152,8 +155,9 @@
 }
 
 .button {
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   padding: var(--space-2) var(--space-4);
+  font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: 600;
   border: 1px solid transparent;
@@ -161,7 +165,7 @@
 }
 
 .button--primary {
-  background-color: var(--color-teal);
+  background-color: var(--color-green);
   color: white;
 }
 
@@ -171,12 +175,12 @@
 
 .button--outline {
   background-color: transparent;
-  border-color: var(--color-teal);
-  color: var(--color-teal);
+  border-color: var(--color-green);
+  color: var(--color-green);
 }
 
 .button--outline:hover {
-  background-color: var(--color-teal-soft);
+  background-color: var(--color-green-soft);
 }
 
 .button--ghost {
@@ -220,7 +224,7 @@
   padding: 0;
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-teal);
+  color: var(--color-green);
 }
 
 .plan-card__link:hover {

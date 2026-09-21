@@ -35,8 +35,8 @@
 }
 
 .followup__notice {
-  border: 1px solid #e9cf9f;
-  background-color: var(--color-gold-soft);
+  border: 1px solid #e3ecab;
+  background-color: var(--color-lime-soft);
   border-radius: var(--radius-md);
   padding: var(--space-3);
   font-size: var(--font-size-sm);
@@ -128,5 +128,5 @@
 
 .touches-table__input:focus {
   outline: none;
-  border-color: var(--color-teal);
+  border-color: var(--color-green);
 }

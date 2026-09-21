@@ -38,7 +38,7 @@
 
 .leads-table__score {
   font-weight: 700;
-  color: var(--color-teal);
+  color: var(--color-green);
 }
 
 .leads-table__actions {
@@ -60,11 +60,11 @@
 }
 
 .leads-table__action--primary {
-  color: var(--color-teal);
+  color: var(--color-green);
 }
 
 .leads-table__action--danger {
-  color: var(--color-coral);
+  color: var(--color-orange);
 }
 
 .leads-table__action:hover {
