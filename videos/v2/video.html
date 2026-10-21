@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&display=block" rel="stylesheet">
+<style>
+  :root {
+    --fachada: #F4F5F2;
+    --acero: #262A30;
+    --nogal: #7A4A2A;
+    --cielo: #3E9BE0;
+    --flamboyan: #E5431F;
+    --tinta: #1D1F22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--acero); }
+  body { font-family: Inter, sans-serif; color: var(--tinta); }
+  .display { font-family: 'Big Shoulders Display', sans-serif; }
+  .scene { position: absolute; inset: 0; overflow: hidden; display: none; }
+
+  /* Foto de la torre controlada por cámara */
+  .photo { position: absolute; left: 0; top: 0; width: 1600px; height: 912px; transform-origin: 0 0; }
+  .shade { position: absolute; inset: 0; }
+
+  /* Chat */
+  .chat { position: absolute; left: 60px; right: 60px; bottom: 470px; display: flex; flex-direction: column; justify-content: flex-end; gap: 22px; }
+  .msg { max-width: 800px; padding: 26px 34px; border-radius: 40px; font-size: 46px; line-height: 1.25; font-weight: 500;
+         box-shadow: 0 10px 30px rgba(0,0,0,.28); display: none; }
+  .in  { align-self: flex-start; background: #fff; border-bottom-left-radius: 10px; transform-origin: 0 100%; }
+  .out { align-self: flex-end; background: var(--flamboyan); color: #fff; border-bottom-right-radius: 10px; transform-origin: 100% 100%; }
+  .typing { display: none; align-self: flex-start; background: #fff; padding: 30px 36px; border-radius: 40px; border-bottom-left-radius: 10px; gap: 12px; }
+  .typing i { width: 18px; height: 18px; border-radius: 50%; background: #8A9099; display: inline-block; }
+
+  /* Transición: cinta diagonal de la fachada */
+  .wipe { position: absolute; left: -1200px; top: -1200px; width: 3480px; height: 4320px; transform: rotate(24deg); pointer-events: none; z-index: 50; }
+  .wipe .bands { position: absolute; top: 0; height: 100%; width: 2200px; display: flex; }
+  .wipe .bands b { height: 100%; }
+
+  .aviso { position: absolute; top: 150px; left: 0; right: 0; text-align: center; font-size: 28px; color: rgba(255,255,255,.85);
+           text-shadow: 0 2px 6px rgba(0,0,0,.6); z-index: 40; }
+
+  /* Escena 2: barras-torre */
+  .s2 { background: var(--fachada); }
+  .s2 h1 { position: absolute; left: 70px; right: 70px; top: 230px; font-size: 128px; line-height: .92; font-weight: 900; color: var(--acero); letter-spacing: -1px; }
+  .bar { position: absolute; bottom: 330px; width: 330px; transform-origin: 50% 100%;
+         background-image: repeating-linear-gradient(to bottom, transparent 0 58px, rgba(255,255,255,.55) 58px 66px); }
+  .bar.zona { left: 120px; background-color: #9AA1AA; }
+  .bar.esta { left: 630px; background-color: var(--nogal); }
+  .barlab { position: absolute; width: 400px; text-align: center; }
+  .barlab .n { font-size: 112px; font-weight: 900; line-height: 1; }
+  .barlab .l { font-size: 34px; font-weight: 600; margin-top: 6px; }
+  .menos { position: absolute; left: 545px; top: 560px; font-size: 205px; font-weight: 900; color: var(--flamboyan); transform-origin: 50% 50%; }
+  .base { position: absolute; left: 70px; right: 70px; bottom: 318px; height: 12px; background: var(--acero); }
+
+  /* Escena 3: pisos que se apilan */
+  .slab { position: absolute; left: 160px; width: 760px; height: 160px; background: var(--fachada);
+          border-bottom: 16px solid var(--acero); box-shadow: 0 14px 30px rgba(0,0,0,.35); }
+  .slab .wood { position: absolute; top: -6px; width: 110px; height: 182px; background: var(--nogal); }
+  .slab span { position: absolute; left: 44px; top: 24px; font-size: 92px; font-weight: 900; line-height: 1; color: var(--acero); }
+  .s3 h1 { position: absolute; left: 70px; right: 70px; top: 300px; font-size: 120px; line-height: .92; font-weight: 900; color: #fff; }
+
+  /* Escena 4: stickers */
+  .stk { position: absolute; padding: 22px 34px; border-radius: 26px; background: #fff; font-size: 46px; font-weight: 700;
+         box-shadow: 0 12px 30px rgba(0,0,0,.35); white-space: nowrap; }
+  .stk.pin { background: var(--flamboyan); color: #fff; }
+
+  /* Escena 5: odómetro */
+  .s5 { background: var(--acero); }
+  .s5 .ribbon { position: absolute; width: 200px; height: 3000px; left: 760px; top: -500px; transform: rotate(24deg); opacity: .5;
+                background: linear-gradient(90deg, var(--nogal) 0 50%, #1B1E22 50% 100%); }
+  .s5 .lbl { position: absolute; left: 70px; top: 470px; font-size: 48px; font-weight: 600; color: rgba(255,255,255,.75); }
+  .odo { position: absolute; left: 60px; top: 540px; display: flex; align-items: flex-start; color: #fff; font-weight: 900; font-size: 250px; line-height: 1; }
+  .odo .cur { font-size: 120px; margin-top: 30px; margin-right: 8px; color: rgba(255,255,255,.8); }
+  .digit { height: 250px; overflow: hidden; display: inline-block; font-variant-numeric: tabular-nums; }
+  .digit .col { display: flex; flex-direction: column; }
+  .digit .col span { height: 250px; display: block; }
+  .strike { position: absolute; left: 60px; top: 655px; height: 22px; background: var(--flamboyan); transform-origin: 0 50%; }
+  .badge { position: absolute; left: 70px; top: 880px; padding: 20px 36px; background: var(--flamboyan); color: #fff; border-radius: 18px;
+           font-size: 64px; font-weight: 800; transform-origin: 0 50%; }
+  .entrega { position: absolute; left: 70px; top: 1040px; font-size: 54px; font-weight: 600; color: #fff; }
+  .entrega b { color: var(--cielo); }
+
+  /* Escena 6: CTA */
+  .inputbar { position: absolute; left: 50px; right: 50px; bottom: 330px; height: 120px; display: flex; gap: 20px; align-items: center; }
+  .inputbar .field { flex: 1; height: 110px; background: #fff; border-radius: 60px; padding: 0 40px; display: flex; align-items: center;
+                     font-size: 48px; font-weight: 700; color: var(--tinta); letter-spacing: 1px; }
+  .inputbar .field.ph { color: #8A9099; font-weight: 500; letter-spacing: 0; }
+  .caret { width: 4px; height: 56px; background: var(--flamboyan); margin-left: 4px; }
+  .send { width: 110px; height: 110px; border-radius: 50%; background: var(--flamboyan); display: flex; align-items: center; justify-content: center; }
+  .s6 h1 { position: absolute; left: 70px; right: 70px; top: 300px; font-size: 118px; line-height: 1.12; font-weight: 900; color: #fff; }
+  .s6 h1 em { font-style: normal; color: var(--flamboyan); background: #fff; padding: 0 16px; }
+  .s6 p.sub { position: absolute; left: 70px; right: 70px; top: 600px; font-size: 52px; font-weight: 600; color: #fff; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<!-- Escena 1: chat sobre la torre -->
+<div class="scene" id="s1">
+  <img class="photo" src="torre.jpg">
+  <div class="shade" style="background: linear-gradient(to bottom, rgba(0,0,0,0) 35%, rgba(20,22,26,.75) 100%)"></div>
+  <div class="chat">
+    <div class="msg in"  data-t="0.35">¿Tú sigues buscando apartamento en el Distrito?</div>
+    <div class="typing" data-a="1.05" data-b="1.75"><i></i><i></i><i></i></div>
+    <div class="msg out" data-t="1.75">Sí, pero todo está carísimo 😩</div>
+    <div class="typing" data-a="2.7" data-b="3.4"><i></i><i></i><i></i></div>
+    <div class="msg in"  data-t="3.4">Mira esto en Renacimiento 👀</div>
+  </div>
+</div>
+
+<!-- Escena 2: precio por m² -->
+<div class="scene s2" id="s2">
+  <h1 class="display" id="s2h">El m² aquí te sale mucho más barato</h1>
+  <div class="base"></div>
+  <div class="bar zona" id="barZ"></div>
+  <div class="bar esta" id="barE"></div>
+  <div class="barlab" id="labZ" style="left:85px"><div class="n display" id="numZ">US$0</div><div class="l">promedio de la zona</div></div>
+  <div class="barlab" id="labE" style="left:595px"><div class="n display" id="numE" style="color:var(--nogal)">US$0</div><div class="l">en esta torre</div></div>
+  <div class="menos display" id="menos">−27%</div>
+</div>
+
+<!-- Escena 3: pisos -->
+<div class="scene s3" id="s3">
+  <img class="photo" src="torre.jpg">
+  <div class="shade" style="background: rgba(24,27,31,.72)"></div>
+  <h1 class="display" id="s3h">Piso por piso, esto es lo que trae</h1>
+  <div class="slab" id="f0"><div class="wood" style="left:630px"></div><span class="display">2 habitaciones</span></div>
+  <div class="slab" id="f1"><div class="wood" style="left:530px"></div><span class="display">2 parqueos</span></div>
+  <div class="slab" id="f2"><div class="wood" style="left:430px"></div><span class="display">2.5 baños</span></div>
+  <div class="slab" id="f3"><div class="wood" style="left:330px"></div><span class="display">83 m²</span></div>
+</div>
+
+<!-- Escena 4: amenidades como stickers -->
+<div class="scene" id="s4">
+  <img class="photo" src="torre.jpg">
+  <div class="shade" style="background: linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.25))"></div>
+  <div class="stk" id="k0" style="left:80px;  top:380px">🏋️ Gimnasio</div>
+  <div class="stk" id="k1" style="left:250px; top:560px">🌇 Terraza común y privada</div>
+  <div class="stk" id="k2" style="left:110px; top:760px">👔 Walk-in closet</div>
+  <div class="stk" id="k3" style="left:330px; top:950px">⚡ Planta eléctrica full</div>
+  <div class="stk pin" id="k4" style="left:150px; top:1180px">📍 A minutos del Mirador Sur</div>
+</div>
+
+<!-- Escena 5: el precio -->
+<div class="scene s5" id="s5">
+  <div class="ribbon"></div>
+  <div class="lbl" id="lbl5">Lo tenían en</div>
+  <div class="odo display" id="odo"><span class="cur">US$</span></div>
+  <div class="strike" id="strike"></div>
+  <div class="badge display" id="badge">Lo bajaron US$9,500</div>
+  <div class="entrega" id="entrega">Entrega en <b>octubre 2027</b>: tiempo para ir pagando el inicial</div>
+</div>
+
+<!-- Escena 6: CTA -->
+<div class="scene s6" id="s6">
+  <img class="photo" src="torre.jpg">
+  <div class="shade" style="background: linear-gradient(to bottom, rgba(20,22,26,.78), rgba(20,22,26,.55) 50%, rgba(20,22,26,.85))"></div>
+  <h1 class="display" id="s6h">Escríbeme <em>RENACIMIENTO</em></h1>
+  <p class="sub" id="s6p">y te mando los planos y el plan de pago.</p>
+  <div class="chat" style="bottom: 490px">
+    <div class="msg in" data-t="27.4">¿Y cómo lo separo? 😍</div>
+    <div class="msg out" data-t="29.55" style="font-weight:800; letter-spacing:1px">RENACIMIENTO</div>
+  </div>
+  <div class="inputbar">
+    <div class="field" id="field"></div>
+    <div class="send" id="send"><svg width="54" height="54" viewBox="0 0 24 24"><path d="M3 20.5 21 12 3 3.5l.01 6.6L15 12l-11.99 1.9z" fill="#fff"/></svg></div>
+  </div>
+</div>
+
+<div class="aviso" id="aviso">Imagen referencial, proyecto en construcción</div>
+
+<div class="wipe" id="wipe"><div class="bands" id="bands">
+  <b style="width:620px;background:var(--acero)"></b>
+  <b style="width:520px;background:var(--nogal)"></b>
+  <b style="width:420px;background:var(--fachada)"></b>
+  <b style="width:640px;background:var(--flamboyan)"></b>
+</div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const outCubic = x => 1 - Math.pow(1 - x, 3);
+const inOut = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const outBack = x => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+
+// Cámara sobre el render: (cx, cy) punto de la imagen al centro, zoom 1 = llena el alto
+function cam(img, cx, cy, zoom) {
+  const s = (1920 / 912) * zoom;
+  img.style.transform = `translate(${540 - cx * s}px, ${960 - cy * s}px) scale(${s})`;
+}
+
+// Escenas: [id, inicio, fin]
+const SCENES = [['s1', 0, 5.6], ['s2', 5.6, 11.3], ['s3', 11.3, 17], ['s4', 17, 22.1], ['s5', 22.1, 27.1], ['s6', 27.1, 32]];
+const WIPES = [5.3, 11.0, 16.7, 21.8, 26.8];   // la cinta cubre la pantalla en w + 0.3
+
+function pop(el, t, t0, d = .35) {
+  const x = prog(t, t0, t0 + d);
+  el.style.opacity = x > 0 ? Math.min(1, x * 3) : 0;
+  el.style.transform = `scale(${x > 0 ? lerp(.55, 1, outBack(x)) : .55})`;
+}
+
+function chat(scene, t) {
+  scene.querySelectorAll('.msg').forEach(m => {
+    const t0 = +m.dataset.t;
+    m.style.display = t >= t0 ? 'block' : 'none';
+    if (t >= t0) pop(m, t, t0, .3);
+  });
+  scene.querySelectorAll('.typing').forEach(d => {
+    const on = t >= +d.dataset.a && t < +d.dataset.b;
+    d.style.display = on ? 'flex' : 'none';
+    d.querySelectorAll('i').forEach((dot, i) => {
+      dot.style.transform = `translateY(${-10 * Math.max(0, Math.sin((t * 7) - i * .9))}px)`;
+    });
+  });
+}
+
+// Odómetro: 194,950 -> 185,450
+const OLD = '194,950', NEW = '185,450';
+const odo = $('odo');
+const cols = [];
+for (let i = 0; i < OLD.length; i++) {
+  if (OLD[i] === NEW[i]) { const c = document.createElement('span'); c.textContent = OLD[i]; odo.appendChild(c); cols.push(null); continue; }
+  const d = document.createElement('span'); d.className = 'digit';
+  const col = document.createElement('span'); col.className = 'col';
+  for (let k = 0; k < 20; k++) { const s = document.createElement('span'); s.textContent = k % 10; col.appendChild(s); }
+  d.appendChild(col); odo.appendChild(d); cols.push(col);
+}
+
+function render(t) {
+  for (const [id, a, b] of SCENES) $(id).style.display = t >= a && t < b ? 'block' : 'none';
+  const photoScene = ['s1', 's3', 's4', 's6'].some(id => $(id).style.display === 'block');
+  $('aviso').style.display = photoScene ? 'block' : 'none';
+
+  // Transición de cinta diagonal
+  let wipeX = null;
+  for (const w of WIPES) if (t >= w && t <= w + .6) wipeX = lerp(3480, -2200, inOut(prog(t, w, w + .6)));
+  $('wipe').style.display = wipeX === null ? 'none' : 'block';
+  if (wipeX !== null) $('bands').style.transform = `translateX(${wipeX}px)`;
+
+  // 1. Chat inicial
+  if (t < 5.6) {
+    const img = document.querySelector('#s1 .photo');
+    const x = inOut(prog(t, 0, 5.6));
+    cam(img, 785, lerp(470, 400, x), lerp(1.0, 1.18, x));
+    chat($('s1'), t);
+  }
+
+  // 2. Barras-torre del m²
+  if (t >= 5.6 && t < 11.3) {
+    const h = prog(t, 5.8, 6.3);
+    $('s2h').style.opacity = h; $('s2h').style.transform = `translateY(${lerp(40, 0, outCubic(h))}px)`;
+    const gz = outCubic(prog(t, 6.2, 7.3)), ge = outCubic(prog(t, 6.9, 8.0));
+    const HZ = 900 * 0.80, HE = HZ * 2234 / 3047;
+    $('barZ').style.height = HZ * gz + 'px'; $('barE').style.height = HE * ge + 'px';
+    $('labZ').style.top = (1920 - 330 - HZ * gz - 190) + 'px'; $('labZ').style.opacity = gz > .05 ? 1 : 0;
+    $('labE').style.top = (1920 - 330 - HE * ge - 190) + 'px'; $('labE').style.opacity = ge > .05 ? 1 : 0;
+    $('numZ').textContent = 'US$' + Math.round(3047 * gz).toLocaleString('en-US');
+    $('numE').textContent = 'US$' + Math.round(2234 * ge).toLocaleString('en-US');
+    const m = prog(t, 8.5, 8.85);
+    $('menos').style.opacity = m > 0 ? 1 : 0;
+    $('menos').style.transform = `rotate(-8deg) scale(${m > 0 ? lerp(2.4, 1, outBack(m)) : 0})`;
+  }
+
+  // 3. Pisos que se apilan
+  if (t >= 11.3 && t < 17) {
+    const img = document.querySelector('#s3 .photo');
+    cam(img, 785, lerp(430, 380, prog(t, 11.3, 17)), 1.9);
+    const h = prog(t, 11.6, 12.1);
+    $('s3h').style.opacity = h; $('s3h').style.transform = `translateY(${lerp(40, 0, outCubic(h))}px)`;
+    for (let i = 0; i < 4; i++) {
+      const t0 = 12.2 + i * .7, f = $('f' + i);
+      const land = 1460 - 160 - i * 176;
+      const x = prog(t, t0, t0 + .45);
+      f.style.opacity = x > 0 ? 1 : 0;
+      f.style.top = lerp(-300, land, outBack(x)) + 'px';
+    }
+  }
+
+  // 4. Barrio + stickers
+  if (t >= 17 && t < 22.1) {
+    const img = document.querySelector('#s4 .photo');
+    const x = inOut(prog(t, 17, 22.1));
+    cam(img, lerp(800, 1180, x), 456, lerp(1.06, 1.03, x));
+    const rot = [-4, 3, -2, 4, -3];
+    for (let i = 0; i < 5; i++) {
+      const k = $('k' + i), t0 = 17.6 + i * .55, p = prog(t, t0, t0 + .35);
+      k.style.opacity = p > 0 ? 1 : 0;
+      k.style.transform = `rotate(${rot[i]}deg) scale(${p > 0 ? lerp(.3, 1, outBack(p)) : 0})`;
+    }
+  }
+
+  // 5. Odómetro del precio
+  if (t >= 22.1 && t < 27.1) {
+    const r = prog(t, 23.1, 24.5);
+    $('lbl5').textContent = r < .5 ? 'Lo tenían en' : 'Ahora está en';
+    $('lbl5').style.opacity = prog(t, 22.4, 22.8);
+    cols.forEach((col, i) => {
+      if (!col) return;
+      const a = +OLD[i], b = +NEW[i];
+      const target = a === b ? a : (b > a ? b : b + 10);
+      const stagger = i * .05;
+      const v = lerp(a, target, inOut(clamp((r - stagger) / (1 - .3))));
+      col.style.transform = `translateY(${-v * 250}px)`;
+    });
+    $('odo').style.opacity = prog(t, 22.4, 22.8);
+    const odoW = $('odo').getBoundingClientRect().width;
+    const s = prog(t, 22.75, 23.05) * (1 - prog(t, 23.15, 23.35));
+    $('strike').style.width = odoW + 'px';
+    $('strike').style.transform = `rotate(-4deg) scaleX(${s})`;
+    pop($('badge'), t, 24.6, .4);
+    const e = prog(t, 25.3, 25.8);
+    $('entrega').style.opacity = e; $('entrega').style.transform = `translateY(${lerp(30, 0, outCubic(e))}px)`;
+  }
+
+  // 6. CTA con el chat
+  if (t >= 27.1) {
+    const img = document.querySelector('#s6 .photo');
+    cam(img, 785, lerp(380, 350, prog(t, 27.1, 32)), 1.35);
+    chat($('s6'), t);
+    const word = 'RENACIMIENTO', ty = prog(t, 28.1, 29.2);
+    const n = Math.floor(ty * word.length + 1e-6), sent = t >= 29.5;
+    const field = $('field');
+    if (n === 0 || sent) { field.className = 'field ph'; field.textContent = 'Mensaje'; }
+    else { field.className = 'field'; field.textContent = word.slice(0, n); const c = document.createElement('span'); c.className = 'caret'; field.appendChild(c); }
+    const pulse = t >= 29.3 && t < 29.55 ? 1 - .15 * Math.sin(prog(t, 29.3, 29.55) * Math.PI) : 1;
+    $('send').style.transform = `scale(${pulse})`;
+    const h = prog(t, 29.9, 30.3);
+    $('s6h').style.opacity = h; $('s6h').style.transform = `translateY(${lerp(40, 0, outCubic(h))}px)`;
+    const p = prog(t, 30.25, 30.65);
+    $('s6p').style.opacity = p;
+  }
+
+  document.body.style.opacity = t > 31.6 ? 1 - prog(t, 31.6, 32) : 1;
+}
+window.render = render;
+</script>
+</body>
+</html>
